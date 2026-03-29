@@ -6,11 +6,35 @@
     <title>AP City 3D — Drive. Explore. Discover My Work.</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Exo 2', sans-serif; overflow: hidden; color: #fff; }
-        canvas { display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Exo 2', sans-serif;
+            overflow: hidden;
+            color: #fff;
+        }
+        
+        canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
         
         /* UI Overlay */
+        .ui-element {
+            position: fixed;
+            z-index: 100;
+            pointer-events: none;
+        }
+        
         #info {
             position: fixed;
             top: 20px;
@@ -36,8 +60,19 @@
             letter-spacing: 2px;
         }
         
-        .name { font-size: 18px; font-weight: 700; color: #00d4ff; letter-spacing: 2px; }
-        .tagline { font-size: 10px; color: rgba(0, 212, 255, 0.6); letter-spacing: 1px; margin-top: 4px; }
+        .name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00d4ff;
+            letter-spacing: 2px;
+        }
+        
+        .tagline {
+            font-size: 10px;
+            color: rgba(0, 212, 255, 0.6);
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
         
         #controls-panel {
             position: fixed;
@@ -82,9 +117,22 @@
             font-family: 'Orbitron', monospace;
         }
         
-        #building-indicator.visible { opacity: 1; }
-        .building-name { color: #00ff88; font-size: 16px; font-weight: 700; letter-spacing: 2px; }
-        .building-hint { font-size: 10px; color: rgba(255, 255, 255, 0.5); margin-top: 5px; }
+        #building-indicator.visible {
+            opacity: 1;
+        }
+        
+        .building-name {
+            color: #00ff88;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        
+        .building-hint {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 5px;
+        }
         
         #progress-panel {
             position: fixed;
@@ -102,10 +150,34 @@
             pointer-events: none;
         }
         
-        .progress-label { font-size: 9px; color: rgba(0, 212, 255, 0.6); letter-spacing: 2px; margin-bottom: 5px; }
-        .progress-bar { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; overflow: hidden; margin: 8px 0; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #00d4ff, #b04fff, #ff3da6); width: 0%; transition: width 0.5s; border-radius: 2px; }
-        .progress-text { font-size: 10px; color: #00d4ff; }
+        .progress-label {
+            font-size: 9px;
+            color: rgba(0, 212, 255, 0.6);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #b04fff, #ff3da6);
+            width: 0%;
+            transition: width 0.5s;
+            border-radius: 2px;
+        }
+        
+        .progress-text {
+            font-size: 10px;
+            color: #00d4ff;
+        }
         
         #achievement-toast {
             position: fixed;
@@ -124,9 +196,21 @@
             pointer-events: none;
         }
         
-        #achievement-toast.show { transform: translateX(0); }
-        .ach-title { font-size: 9px; color: #ffb700; letter-spacing: 2px; margin-bottom: 4px; }
-        .ach-name { font-size: 12px; color: #fff; }
+        #achievement-toast.show {
+            transform: translateX(0);
+        }
+        
+        .ach-title {
+            font-size: 9px;
+            color: #ffb700;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+        
+        .ach-name {
+            font-size: 12px;
+            color: #fff;
+        }
         
         #modal-overlay {
             position: fixed;
@@ -142,7 +226,10 @@
             transition: opacity 0.3s;
         }
         
-        #modal-overlay.open { opacity: 1; pointer-events: all; }
+        #modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
         
         .modal-content {
             background: linear-gradient(145deg, #080818, #0d1228);
@@ -158,7 +245,9 @@
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        #modal-overlay.open .modal-content { transform: scale(1); }
+        #modal-overlay.open .modal-content {
+            transform: scale(1);
+        }
         
         .modal-close {
             position: absolute;
@@ -178,36 +267,175 @@
             transition: all 0.2s;
         }
         
-        .modal-close:hover { background: rgba(255, 0, 0, 0.3); border-color: rgba(255, 0, 0, 0.5); }
-        .modal-icon { font-size: 48px; text-align: center; margin-bottom: 12px; }
-        .modal-title { font-family: 'Orbitron', monospace; font-size: 24px; font-weight: 900; text-align: center; margin-bottom: 6px; }
-        .modal-subtitle { font-size: 11px; text-align: center; color: rgba(0, 212, 255, 0.6); letter-spacing: 2px; margin-bottom: 20px; }
-        .modal-divider { height: 1px; background: linear-gradient(90deg, transparent, #00d4ff, transparent); margin: 20px 0; }
+        .modal-close:hover {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: rgba(255, 0, 0, 0.5);
+        }
         
-        .section-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
-        .sec-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 14px; }
-        .sec-card h4 { font-size: 13px; color: #00d4ff; margin-bottom: 8px; }
-        .sec-card p { font-size: 11px; color: rgba(255, 255, 255, 0.7); line-height: 1.5; }
+        .modal-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
         
-        .skill-item { margin-bottom: 12px; }
-        .skill-name { font-size: 11px; display: flex; justify-content: space-between; margin-bottom: 4px; }
-        .skill-track { height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; overflow: hidden; }
-        .skill-fill { height: 100%; border-radius: 2px; width: 0%; transition: width 1s; }
-        .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 9px; border: 1px solid; margin: 2px; }
+        .modal-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 24px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 6px;
+        }
         
-        .exp-item { padding: 12px; background: rgba(255, 255, 255, 0.03); border-left: 3px solid; border-radius: 0 8px 8px 0; margin-bottom: 12px; }
-        .exp-item h4 { font-size: 13px; margin-bottom: 4px; }
-        .exp-item p { font-size: 11px; color: rgba(255, 255, 255, 0.6); }
-        .exp-role { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+        .modal-subtitle {
+            font-size: 11px;
+            text-align: center;
+            color: rgba(0, 212, 255, 0.6);
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
         
-        .contact-form input, .contact-form textarea { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 10px; color: #fff; font-size: 12px; margin-bottom: 10px; outline: none; }
-        .contact-form input:focus, .contact-form textarea:focus { border-color: #ff6b35; }
-        .contact-form textarea { height: 70px; resize: none; }
-        .contact-btn { background: linear-gradient(135deg, #ff6b35, #ff3da6); border: none; border-radius: 8px; padding: 10px 20px; color: #fff; font-weight: 600; cursor: pointer; width: 100%; }
+        .modal-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+            margin: 20px 0;
+        }
         
-        .dream-item { padding: 10px; background: rgba(255, 183, 0, 0.05); border: 1px solid rgba(255, 183, 0, 0.15); border-radius: 8px; margin-bottom: 8px; }
-        .dream-item h4 { font-size: 12px; color: #ffb700; }
-        .dream-item p { font-size: 10px; color: rgba(255, 255, 255, 0.6); }
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .sec-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px;
+        }
+        
+        .sec-card h4 {
+            font-size: 13px;
+            color: #00d4ff;
+            margin-bottom: 8px;
+        }
+        
+        .sec-card p {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+        
+        .skill-item {
+            margin-bottom: 12px;
+        }
+        
+        .skill-name {
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        
+        .skill-track {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .skill-fill {
+            height: 100%;
+            border-radius: 2px;
+            width: 0%;
+            transition: width 1s;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            border: 1px solid;
+            margin: 2px;
+        }
+        
+        .exp-item {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 12px;
+        }
+        
+        .exp-item h4 {
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        
+        .exp-item p {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .exp-role {
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            color: #fff;
+            font-size: 12px;
+            margin-bottom: 10px;
+            outline: none;
+        }
+        
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: #ff6b35;
+        }
+        
+        .contact-form textarea {
+            height: 70px;
+            resize: none;
+        }
+        
+        .contact-btn {
+            background: linear-gradient(135deg, #ff6b35, #ff3da6);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .dream-item {
+            padding: 10px;
+            background: rgba(255, 183, 0, 0.05);
+            border: 1px solid rgba(255, 183, 0, 0.15);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .dream-item h4 {
+            font-size: 12px;
+            color: #ffb700;
+        }
+        
+        .dream-item p {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.6);
+        }
         
         #loading {
             position: fixed;
@@ -221,24 +449,48 @@
             font-family: 'Orbitron', monospace;
         }
         
-        .loader-text { color: #00d4ff; font-size: 14px; letter-spacing: 2px; margin-top: 20px; }
-        
-        @media (max-width: 600px) {
-            #info { font-size: 10px; padding: 8px 12px; }
-            .name { font-size: 14px; }
-            #progress-panel { padding: 8px 12px; min-width: 120px; }
-            .modal-content { padding: 20px; }
+        .loader-text {
+            color: #00d4ff;
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-top: 20px;
         }
         
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.3); border-radius: 2px; }
+        @media (max-width: 600px) {
+            #info {
+                font-size: 10px;
+                padding: 8px 12px;
+            }
+            .name {
+                font-size: 14px;
+            }
+            #progress-panel {
+                padding: 8px 12px;
+                min-width: 120px;
+            }
+            .modal-content {
+                padding: 20px;
+            }
+        }
+        
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.3);
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body>
     <div id="loading">
         <div style="font-size: 32px; font-weight: 900; background: linear-gradient(135deg,#00d4ff,#b04fff,#ff3da6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AP CITY 3D</div>
-        <div class="loader-text">LOADING 3D WORLD...</div>
+        <div class="loader-text">INITIALIZING 3D WORLD...</div>
     </div>
     
     <div id="info">
@@ -249,7 +501,9 @@
     
     <div id="progress-panel">
         <div class="progress-label">CITY EXPLORED</div>
-        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
         <div class="progress-text" id="progress-text">0 / 8 BUILDINGS</div>
     </div>
     
@@ -275,44 +529,42 @@
         </div>
     </div>
 
-    <!-- Try multiple CDNs with fallback -->
-    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+    <!-- Three.js from reliable CDN with fallback -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // Check if Three.js loaded, if not try alternative CDN
-        if (typeof THREE === 'undefined') {
-            document.write('<script src="https://cdn.skypack.dev/three@<version>/build/three.min.js"><\/script>');
-        }
-    </script>
-    
-    <script>
-        // Wait for everything to load
-        function waitForThree() {
-            if (typeof THREE === 'undefined') {
-                setTimeout(waitForThree, 100);
-                return;
+        // Wait for Three.js to load and initialize
+        let threeLoaded = false;
+        
+        function checkThree() {
+            if (typeof THREE !== 'undefined') {
+                threeLoaded = true;
+                initGame();
+            } else {
+                setTimeout(checkThree, 100);
             }
-            init3D();
         }
         
-        window.addEventListener('load', waitForThree);
+        checkThree();
         
-        function init3D() {
-            console.log('Three.js loaded, initializing AP City 3D...');
+        function initGame() {
+            console.log('Three.js loaded, starting AP City 3D...');
             
             // Hide loading screen
-            const loading = document.getElementById('loading');
-            if (loading) loading.style.display = 'none';
+            setTimeout(() => {
+                const loading = document.getElementById('loading');
+                if (loading) loading.style.display = 'none';
+            }, 500);
             
-            // ============ BUILDING DATA ============
+            // ============ GAME DATA ============
             const buildingsData = [
-                { id: 'house', label: '🏠 HOUSE', sublabel: 'About Me', pos: { x: -12, z: -18 }, color: 0x00d4ff, section: 'house', achievement: 'Welcome to AP City! 🏠' },
-                { id: 'office', label: '🏢 OFFICE', sublabel: 'Experience', pos: { x: 8, z: -16 }, color: 0xb04fff, section: 'office', achievement: 'Clocking In! 🏢' },
-                { id: 'garage', label: '🔧 GARAGE', sublabel: 'Skills', pos: { x: -18, z: -2 }, color: 0x00ff88, section: 'garage', achievement: 'My Garage — Powered Up! ⚙️' },
-                { id: 'techpark', label: '💻 TECH PARK', sublabel: 'Projects', pos: { x: 10, z: -1 }, color: 0x00ffd4, section: 'techpark', achievement: 'Code Deployed! 💻' },
-                { id: 'stadium', label: '🏟️ STADIUM', sublabel: 'Events', pos: { x: -14, z: 12 }, color: 0xff3da6, section: 'stadium', achievement: 'Crowd Goes Wild! 🎤' },
-                { id: 'cafe', label: '☕ CAFÉ', sublabel: 'Contact Me', pos: { x: 6, z: 14 }, color: 0xff6b35, section: 'cafe', achievement: "Let's Meet! ☕" },
-                { id: 'secret', label: '? HIDDEN', sublabel: 'Achievements', pos: { x: -24, z: -12 }, color: 0xff0055, section: 'secret', achievement: '🕵️ Secret Agent — Found It!' },
-                { id: 'dream', label: '🌟 DREAM TOWER', sublabel: 'Future Goals', pos: { x: 16, z: 8 }, color: 0xffb700, section: 'dream', achievement: 'Dreams Are Loading... 🌟' }
+                { id: 'house', label: '🏠 HOUSE', sublabel: 'About Me', x: -12, z: -18, color: 0x00d4ff, section: 'house', achievement: 'Welcome to AP City! 🏠' },
+                { id: 'office', label: '🏢 OFFICE', sublabel: 'Experience', x: 8, z: -16, color: 0xb04fff, section: 'office', achievement: 'Clocking In! 🏢' },
+                { id: 'garage', label: '🔧 GARAGE', sublabel: 'Skills', x: -18, z: -2, color: 0x00ff88, section: 'garage', achievement: 'My Garage — Powered Up! ⚙️' },
+                { id: 'techpark', label: '💻 TECH PARK', sublabel: 'Projects', x: 10, z: -1, color: 0x00ffd4, section: 'techpark', achievement: 'Code Deployed! 💻' },
+                { id: 'stadium', label: '🏟️ STADIUM', sublabel: 'Events', x: -14, z: 12, color: 0xff3da6, section: 'stadium', achievement: 'Crowd Goes Wild! 🎤' },
+                { id: 'cafe', label: '☕ CAFÉ', sublabel: 'Contact Me', x: 6, z: 14, color: 0xff6b35, section: 'cafe', achievement: "Let's Meet! ☕" },
+                { id: 'secret', label: '? HIDDEN', sublabel: 'Achievements', x: -24, z: -12, color: 0xff0055, section: 'secret', achievement: '🕵️ Secret Agent — Found It!' },
+                { id: 'dream', label: '🌟 DREAM TOWER', sublabel: 'Future Goals', x: 16, z: 8, color: 0xffb700, section: 'dream', achievement: 'Dreams Are Loading... 🌟' }
             ];
             
             const visitedBuildings = new Set();
@@ -322,73 +574,77 @@
             // ============ THREE.JS SETUP ============
             const scene = new THREE.Scene();
             scene.background = new THREE.Color(0x050510);
-            scene.fog = new THREE.FogExp2(0x050510, 0.008);
+            scene.fog = new THREE.FogExp2(0x050510, 0.006);
             
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 6, 10);
-            camera.lookAt(0, 0, 0);
+            const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 5, 12);
             
             const renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = true;
             document.body.appendChild(renderer.domElement);
             
-            // ============ LIGHTING ============
-            const ambientLight = new THREE.AmbientLight(0x404060);
+            // ============ LIGHTS ============
+            const ambientLight = new THREE.AmbientLight(0x333344);
             scene.add(ambientLight);
             
-            const directionalLight = new THREE.DirectionalLight(0xfff5e0, 1);
-            directionalLight.position.set(10, 20, 5);
-            directionalLight.castShadow = true;
-            directionalLight.receiveShadow = true;
-            scene.add(directionalLight);
+            const mainLight = new THREE.DirectionalLight(0xfff5e0, 1.2);
+            mainLight.position.set(15, 25, 8);
+            mainLight.castShadow = true;
+            mainLight.receiveShadow = true;
+            scene.add(mainLight);
             
-            const fillLight = new THREE.PointLight(0x4466ff, 0.4);
-            fillLight.position.set(0, 5, 0);
+            const fillLight = new THREE.PointLight(0x4488ff, 0.4);
+            fillLight.position.set(0, 8, 0);
             scene.add(fillLight);
             
+            const backLight = new THREE.PointLight(0xff8866, 0.3);
+            backLight.position.set(-5, 4, -12);
+            scene.add(backLight);
+            
             // ============ GROUND ============
-            const groundMat = new THREE.MeshStandardMaterial({ color: 0x0a0a18, roughness: 0.8 });
+            const groundMat = new THREE.MeshStandardMaterial({ color: 0x0a0a18, roughness: 0.7, metalness: 0.1 });
             const ground = new THREE.Mesh(new THREE.PlaneGeometry(70, 70), groundMat);
             ground.rotation.x = -Math.PI / 2;
-            ground.position.y = -0.1;
+            ground.position.y = -0.15;
             ground.receiveShadow = true;
             scene.add(ground);
             
-            // Grid helper
-            const gridHelper = new THREE.GridHelper(80, 20, 0x00d4ff, 0x334455);
-            gridHelper.position.y = -0.05;
-            scene.add(gridHelper);
+            // Grid
+            const grid = new THREE.GridHelper(80, 30, 0x00d4ff, 0x335588);
+            grid.position.y = -0.1;
+            grid.material.transparent = true;
+            grid.material.opacity = 0.4;
+            scene.add(grid);
             
-            // Road markers
-            const markerMat = new THREE.MeshStandardMaterial({ color: 0xffaa44, emissive: 0xff4400, emissiveIntensity: 0.2 });
-            for (let i = -30; i <= 30; i += 5) {
-                const marker = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 6), markerMat);
-                marker.position.set(i, -0.08, 0);
+            // Road markings
+            const markerMat = new THREE.MeshStandardMaterial({ color: 0xffaa55, emissive: 0xff5500, emissiveIntensity: 0.3 });
+            for (let i = -28; i <= 28; i += 4) {
+                if (Math.abs(i) < 5) continue;
+                const marker = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), markerMat);
+                marker.position.set(i, -0.12, 0);
                 scene.add(marker);
                 
-                const marker2 = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 6), markerMat);
-                marker2.position.set(0, -0.08, i);
-                scene.add(marker2);
+                const markerZ = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), markerMat);
+                markerZ.position.set(0, -0.12, i);
+                scene.add(markerZ);
             }
             
             // ============ TREES ============
             function createTree(x, z) {
                 const group = new THREE.Group();
-                const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6b4c3b });
-                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.7, 1, 6), trunkMat);
+                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.6, 1, 5), new THREE.MeshStandardMaterial({ color: 0x6b4c3b }));
                 trunk.position.y = 0.5;
                 trunk.castShadow = true;
                 group.add(trunk);
                 
-                const foliageMat = new THREE.MeshStandardMaterial({ color: 0x3a8c3a });
-                const foliage1 = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1, 8), foliageMat);
-                foliage1.position.y = 1.1;
+                const foliage1 = new THREE.Mesh(new THREE.ConeGeometry(0.7, 0.9, 6), new THREE.MeshStandardMaterial({ color: 0x4a9e4a }));
+                foliage1.position.y = 1.0;
                 foliage1.castShadow = true;
                 group.add(foliage1);
                 
-                const foliage2 = new THREE.Mesh(new THREE.ConeGeometry(0.6, 0.9, 8), foliageMat);
-                foliage2.position.y = 1.8;
+                const foliage2 = new THREE.Mesh(new THREE.ConeGeometry(0.55, 0.8, 6), new THREE.MeshStandardMaterial({ color: 0x3a8e3a }));
+                foliage2.position.y = 1.65;
                 foliage2.castShadow = true;
                 group.add(foliage2);
                 
@@ -396,181 +652,186 @@
                 return group;
             }
             
-            const treePositions = [
-                [-28, -28], [-25, -30], [-22, -29], [-30, -22], [-32, -25],
-                [28, -28], [25, -30], [22, -29], [30, -22], [32, -25],
-                [-28, 28], [-25, 30], [-22, 29], [-30, 22], [-32, 25],
-                [28, 28], [25, 30], [22, 29], [30, 22], [32, 25]
+            const treeSpots = [
+                [-26, -26], [-24, -28], [-28, -24], [-30, -26], [-26, -30],
+                [26, -26], [24, -28], [28, -24], [30, -26], [26, -30],
+                [-26, 26], [-24, 28], [-28, 24], [-30, 26], [-26, 30],
+                [26, 26], [24, 28], [28, 24], [30, 26], [26, 30]
             ];
             
-            treePositions.forEach(pos => scene.add(createTree(pos[0], pos[1])));
+            treeSpots.forEach(pos => scene.add(createTree(pos[0], pos[1])));
             
             // ============ BUILDINGS ============
             buildingsData.forEach(b => {
                 const group = new THREE.Group();
                 let height = 2.2;
-                if (b.id === 'dream') height = 3.5;
-                if (b.id === 'office') height = 2.8;
-                if (b.id === 'techpark') height = 2.5;
+                if (b.id === 'dream') height = 3.6;
+                if (b.id === 'office') height = 2.9;
+                if (b.id === 'techpark') height = 2.6;
+                if (b.id === 'secret') height = 2.0;
                 
-                const wallMat = new THREE.MeshStandardMaterial({ color: b.color, roughness: 0.3, metalness: 0.4 });
-                const walls = new THREE.Mesh(new THREE.BoxGeometry(1.8, height, 1.8), wallMat);
-                walls.position.y = height / 2;
-                walls.castShadow = true;
-                walls.receiveShadow = true;
-                group.add(walls);
+                const material = new THREE.MeshStandardMaterial({ color: b.color, roughness: 0.3, metalness: 0.5 });
+                const box = new THREE.Mesh(new THREE.BoxGeometry(1.8, height, 1.8), material);
+                box.position.y = height / 2;
+                box.castShadow = true;
+                box.receiveShadow = true;
+                group.add(box);
                 
                 // Windows
-                const windowMat = new THREE.MeshStandardMaterial({ color: 0xffaa77, emissive: 0xff8844, emissiveIntensity: 0.3 });
+                const windowMat = new THREE.MeshStandardMaterial({ color: 0xffcc88, emissive: 0xffaa55, emissiveIntensity: 0.25 });
                 for (let i = -0.5; i <= 0.5; i += 0.5) {
-                    for (let j = 0.7; j <= height - 0.5; j += 0.7) {
-                        const windowBox = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.45, 0.05), windowMat);
-                        windowBox.position.set(i, j, 0.95);
-                        windowBox.castShadow = true;
-                        group.add(windowBox);
+                    for (let j = 0.6; j <= height - 0.5; j += 0.7) {
+                        const win = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.5, 0.08), windowMat);
+                        win.position.set(i, j, 0.95);
+                        win.castShadow = true;
+                        group.add(win);
                         
-                        const windowBoxBack = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.45, 0.05), windowMat);
-                        windowBoxBack.position.set(i, j, -0.95);
-                        windowBoxBack.castShadow = true;
-                        group.add(windowBoxBack);
+                        const winBack = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.5, 0.08), windowMat);
+                        winBack.position.set(i, j, -0.95);
+                        winBack.castShadow = true;
+                        group.add(winBack);
                     }
                 }
                 
                 // Roof
                 const roofMat = new THREE.MeshStandardMaterial({ color: 0xaa8866 });
-                const roof = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.2, 0.2, 4), roofMat);
+                const roof = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.15, 0.2, 4), roofMat);
                 roof.position.y = height;
                 roof.castShadow = true;
                 group.add(roof);
                 
-                group.position.set(b.pos.x, 0, b.pos.z);
+                // Roof decoration
+                const topMat = new THREE.MeshStandardMaterial({ color: b.color, emissive: b.color, emissiveIntensity: 0.3 });
+                const top = new THREE.Mesh(new THREE.SphereGeometry(0.18, 6, 6), topMat);
+                top.position.y = height + 0.18;
+                group.add(top);
+                
+                group.position.set(b.x, 0, b.z);
                 scene.add(group);
             });
             
             // ============ PLAYER CAR ============
-            const carGroup = new THREE.Group();
+            const car = new THREE.Group();
             
-            const carBodyMat = new THREE.MeshStandardMaterial({ color: 0x00d4ff, metalness: 0.8 });
-            const carBodyMain = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.4, 1.5), carBodyMat);
-            carBodyMain.position.y = 0.2;
-            carBodyMain.castShadow = true;
-            carGroup.add(carBodyMain);
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x00d4ff, metalness: 0.85, roughness: 0.2 });
+            const body = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.4, 1.55), bodyMat);
+            body.position.y = 0.2;
+            body.castShadow = true;
+            car.add(body);
             
-            const carRoofMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
-            const carRoofMain = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.35, 0.95), carRoofMat);
-            carRoofMain.position.y = 0.55;
-            carRoofMain.castShadow = true;
-            carGroup.add(carRoofMain);
+            const roofMat = new THREE.MeshStandardMaterial({ color: 0x222233 });
+            const roof = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.35, 1.0), roofMat);
+            roof.position.y = 0.58;
+            roof.castShadow = true;
+            car.add(roof);
             
-            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.7 });
-            const wheelPos = [[-0.6, 0.15, -0.65], [0.6, 0.15, -0.65], [-0.6, 0.15, 0.65], [0.6, 0.15, 0.65]];
+            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.8 });
+            const wheelPos = [[-0.65, 0.16, -0.68], [0.65, 0.16, -0.68], [-0.65, 0.16, 0.68], [0.65, 0.16, 0.68]];
             wheelPos.forEach(pos => {
-                const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.15, 16), wheelMat);
+                const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.18, 16), wheelMat);
                 wheel.rotation.z = Math.PI / 2;
                 wheel.position.set(pos[0], pos[1], pos[2]);
                 wheel.castShadow = true;
-                carGroup.add(wheel);
+                car.add(wheel);
             });
             
-            scene.add(carGroup);
+            scene.add(car);
             
             // ============ NPC CARS ============
-            function createSimpleCar(color, x, z) {
+            function makeNPC(color, x, z) {
                 const group = new THREE.Group();
-                const bodyMat = new THREE.MeshStandardMaterial({ color: color, metalness: 0.6 });
-                const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.4, 1.2), bodyMat);
-                body.position.y = 0.2;
-                body.castShadow = true;
-                group.add(body);
+                const b = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.35, 1.25), new THREE.MeshStandardMaterial({ color: color, metalness: 0.6 }));
+                b.position.y = 0.18;
+                b.castShadow = true;
+                group.add(b);
                 
-                const roofMatN = new THREE.MeshStandardMaterial({ color: 0x444444 });
-                const roof = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.3, 0.8), roofMatN);
-                roof.position.y = 0.55;
-                roof.castShadow = true;
-                group.add(roof);
+                const r = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.28, 0.85), new THREE.MeshStandardMaterial({ color: 0x333344 }));
+                r.position.y = 0.52;
+                r.castShadow = true;
+                group.add(r);
                 
                 group.position.set(x, 0, z);
                 scene.add(group);
                 return group;
             }
             
-            const carColors = [0x00d4ff, 0xb04fff, 0xff3da6, 0x00ff88];
-            const npcCars = [];
-            for (let i = 0; i < 8; i++) {
-                const angle = (i / 8) * Math.PI * 2;
-                const radius = 18;
-                npcCars.push({
-                    mesh: createSimpleCar(carColors[i % carColors.length], Math.cos(angle) * radius, Math.sin(angle) * radius),
+            const npcList = [];
+            const npcColors = [0xff6b6b, 0x6bff6b, 0x6b6bff, 0xff6bff, 0xffb86b];
+            for (let i = 0; i < 10; i++) {
+                const angle = (i / 10) * Math.PI * 2;
+                const rad = 16 + Math.random() * 4;
+                npcList.push({
+                    mesh: makeNPC(npcColors[i % npcColors.length], Math.cos(angle) * rad, Math.sin(angle) * rad),
                     angle: angle,
-                    radius: radius,
-                    speed: 0.008
+                    radius: rad,
+                    speed: 0.006 + Math.random() * 0.004
                 });
             }
             
             // ============ CONTROLS ============
-            const keys = { w: false, s: false, a: false, d: false };
-            let carSpeed = 0;
-            let carAngle = 0;
-            const maxSpeed = 8;
-            const acceleration = 0.4;
-            const friction = 0.96;
-            const turnSpeed = 0.045;
+            const controls = { up: false, down: false, left: false, right: false };
+            let speed = 0;
+            let angle = 0;
+            const MAX_SPEED = 7.5;
+            const ACC = 0.38;
+            const FRICTION = 0.96;
+            const TURN_SPEED = 0.048;
             
             document.addEventListener('keydown', (e) => {
                 const key = e.key.toLowerCase();
-                if (key === 'w') keys.w = true;
-                if (key === 's') keys.s = true;
-                if (key === 'a') keys.a = true;
-                if (key === 'd') keys.d = true;
-                if (key === 'e' && currentBuilding) openBuilding(currentBuilding);
+                if (key === 'w' || key === 'arrowup') controls.up = true;
+                if (key === 's' || key === 'arrowdown') controls.down = true;
+                if (key === 'a' || key === 'arrowleft') controls.left = true;
+                if (key === 'd' || key === 'arrowright') controls.right = true;
+                if (key === 'e' && currentBuilding) openModal(currentBuilding);
                 if (key === 'escape') document.getElementById('modal-overlay').classList.remove('open');
-                if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 's', 'a', 'd'].includes(key)) e.preventDefault();
+                if (['w', 's', 'a', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) e.preventDefault();
             });
             
             document.addEventListener('keyup', (e) => {
                 const key = e.key.toLowerCase();
-                if (key === 'w') keys.w = false;
-                if (key === 's') keys.s = false;
-                if (key === 'a') keys.a = false;
-                if (key === 'd') keys.d = false;
+                if (key === 'w' || key === 'arrowup') controls.up = false;
+                if (key === 's' || key === 'arrowdown') controls.down = false;
+                if (key === 'a' || key === 'arrowleft') controls.left = false;
+                if (key === 'd' || key === 'arrowright') controls.right = false;
             });
             
-            // ============ BUILDING PROXIMITY ============
-            function checkBuildingProximity() {
+            // ============ PROXIMITY CHECK ============
+            function checkProximity() {
                 let closest = null;
                 let closestDist = Infinity;
                 
                 buildingsData.forEach(b => {
-                    const dx = carGroup.position.x - b.pos.x;
-                    const dz = carGroup.position.z - b.pos.z;
+                    const dx = car.position.x - b.x;
+                    const dz = car.position.z - b.z;
                     const dist = Math.sqrt(dx*dx + dz*dz);
-                    if (dist < 2.8 && dist < closestDist) {
+                    if (dist < 2.6 && dist < closestDist) {
                         closestDist = dist;
                         closest = b;
                     }
                 });
                 
                 const indicator = document.getElementById('building-indicator');
-                const buildingNameSpan = document.getElementById('building-name');
+                const nameSpan = document.getElementById('building-name');
                 
                 if (closest !== currentBuilding) {
                     currentBuilding = closest;
                     if (closest) {
                         indicator.classList.add('visible');
-                        buildingNameSpan.textContent = closest.label;
+                        nameSpan.textContent = closest.label;
                     } else {
                         indicator.classList.remove('visible');
                     }
                 }
             }
             
-            // ============ ACHIEVEMENT SYSTEM ============
-            function showAchievement(text) {
-                achievementQueue.push(text);
-                if (achievementQueue.length === 1) processAchievement();
+            // ============ ACHIEVEMENTS ============
+            function showAchievement(msg) {
+                achievementQueue.push(msg);
+                if (achievementQueue.length === 1) processQueue();
             }
             
-            function processAchievement() {
+            function processQueue() {
                 if (!achievementQueue.length) return;
                 const toast = document.getElementById('achievement-toast');
                 document.getElementById('achievement-name').textContent = achievementQueue[0];
@@ -578,7 +839,7 @@
                 setTimeout(() => {
                     toast.classList.remove('show');
                     achievementQueue.shift();
-                    setTimeout(processAchievement, 500);
+                    setTimeout(processQueue, 500);
                 }, 3200);
             }
             
@@ -586,103 +847,86 @@
                 const pct = (visitedBuildings.size / buildingsData.length) * 100;
                 document.getElementById('progress-fill').style.width = pct + '%';
                 document.getElementById('progress-text').textContent = `${visitedBuildings.size} / ${buildingsData.length} BUILDINGS`;
-                if (visitedBuildings.size === buildingsData.length) showAchievement('🏆 Full City Explorer — AP City Conquered!');
+                if (visitedBuildings.size === buildingsData.length) showAchievement('🏆 FULL CITY EXPLORER! 🏆');
             }
             
-            // ============ BUILDING CONTENT ============
-            const buildingContent = {
-                house: { icon: '🏠', title: 'THE STORY BEHIND THE DRIVER', subtitle: 'About Aryan Parmar', color: '#00d4ff', content: `
-                    <div style="text-align:center; margin-bottom:20px"><div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#b04fff);margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:36px;">👨‍💻</div><div style="font-family:Orbitron;font-size:22px;font-weight:900;color:#00d4ff;margin-top:12px">ARYAN PARMAR</div><div style="font-size:11px;color:rgba(0,212,255,0.55)">MUMBAI, INDIA</div></div>
-                    <p>Operations professional and automation builder who turns manual chaos into streamlined systems. I build bots, test apps, manage processes — and create digital experiences people remember.</p>
-                    <div class="modal-divider"></div>
-                    <div class="section-grid"><div class="sec-card"><h4>🏫 Schooling</h4><p>St. Xavier's High School</p></div><div class="sec-card"><h4>🎓 Graduation</h4><p>Tolani College of Commerce</p></div><div class="sec-card"><h4>📱 Leadership</h4><p>Head of Social Media - College Fest</p></div></div>
-                `},
-                office: { icon: '🏢', title: "PLACES I'VE WORKED", subtitle: 'Experience', color: '#b04fff', content: `
-                    <div class="exp-item" style="border-left-color:#b04fff"><div class="exp-role" style="color:#b04fff">Current · Andromeda Sales & Distribution</div><h4>Customer Service & Operations</h4><p>Handling customer service operations, tech processes, app testing, and internal automation.</p></div>
-                    <div class="exp-item" style="border-left-color:#ff3da6"><div class="exp-role" style="color:#ff3da6">Freelance · BookMyShow Events</div><h4>Event Operations</h4><p>Lollapalooza, IPL 2024, Aaditya Gadhvi, Fintech @ Jio Centre</p></div>
-                `},
-                garage: { icon: '🔧', title: 'MY GARAGE', subtitle: 'Skills', color: '#00ff88', content: `
-                    <div class="skill-item"><div class="skill-name"><span>Python Automation</span><span>90%</span></div><div class="skill-track"><div class="skill-fill" style="background:#00d4ff;width:90%"></div></div></div>
-                    <div class="skill-item"><div class="skill-name"><span>Excel Automation</span><span>93%</span></div><div class="skill-track"><div class="skill-fill" style="background:#00ff88;width:93%"></div></div></div>
-                    <div class="modal-divider"></div>
-                    <div>${['Python','Excel','WhatsApp API','Power BI','Canva','Zapier'].map(t => `<span class="tag" style="color:#00ff88;border-color:rgba(0,255,136,0.3)">${t}</span>`).join('')}</div>
-                `},
-                techpark: { icon: '💻', title: 'PROJECTS I BUILT', subtitle: 'That Solve Real Problems', color: '#00ffd4', content: `
-                    <div class="sec-card"><h4>📱 WhatsApp Automation Tool</h4><p>Bulk WhatsApp messaging with Excel integration</p></div>
-                    <div class="sec-card"><h4>📊 Excel Report Automation</h4><p>Smart Excel file generator that eliminates manual work</p></div>
-                    <div class="sec-card"><h4>🤖 AI Voice Assistant</h4><p>Desktop assistant with memory and speech interaction</p></div>
-                `},
-                stadium: { icon: '🏟️', title: 'EVENTS', subtitle: "Live Experiences", color: '#ff3da6', content: `
-                    <div class="sec-card"><h4>🎸 Lollapalooza India</h4><p>Event Ops · BookMyShow</p></div>
-                    <div class="sec-card"><h4>🏏 IPL 2024</h4><p>Match-day operations</p></div>
-                `},
-                cafe: { icon: '☕', title: "LET'S CONNECT", subtitle: "Contact Me", color: '#ff6b35', content: `
-                    <div class="contact-form"><input type="text" placeholder="Your Name"><input type="email" placeholder="Your Email"><textarea placeholder="What's on your mind?"></textarea><button class="contact-btn" onclick="alert('Message sent! Aryan will get back to you.')">SEND MESSAGE →</button></div>
-                `},
-                secret: { icon: '🕵️', title: 'HIDDEN ACHIEVEMENTS', subtitle: 'You Found The Secret', color: '#ff0055', content: `<ul style="list-style:none;padding:0"><li style="padding:8px;background:rgba(255,0,85,0.1);margin:5px 0;border-radius:8px">🎸 Managed 30,000+ users as Head of Social Media</li><li style="padding:8px;background:rgba(255,0,85,0.1);margin:5px 0;border-radius:8px">🤖 Built WhatsApp automation bots from Excel lists</li><li style="padding:8px;background:rgba(255,0,85,0.1);margin:5px 0;border-radius:8px">🎙️ Voice AI assistant with memory in Python</li><li style="padding:8px;background:rgba(255,0,85,0.1);margin:5px 0;border-radius:8px">🏙️ This entire 3D city built from scratch!</li></ul>` },
-                dream: { icon: '🌟', title: 'DREAM TOWER', subtitle: "Future Goals", color: '#ffb700', content: `<div class="dream-item"><h4>🤖 Full Automation Agency</h4><p>Help small businesses automate repetitive work</p></div><div class="dream-item"><h4>🌐 WhatsApp CRM Tool</h4><p>A real product for small business owners</p></div><div class="dream-item"><h4>🎓 AI & Automation Engineer</h4><p>Level up into machine learning</p></div>` }
+            // ============ MODAL CONTENT ============
+            const contentMap = {
+                house: { icon: '🏠', title: 'ABOUT ARYAN', subtitle: 'The Story', color: '#00d4ff', body: '<div style="text-align:center"><div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#b04fff);margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:36px;">👨‍💻</div><h2 style="margin:15px 0 5px">ARYAN PARMAR</h2><p style="color:#aaa">Mumbai, India</p></div><p style="margin:20px 0">Operations professional and automation builder. I build bots, manage processes, and create digital experiences people remember.</p><div class="section-grid"><div class="sec-card"><h4>🏫 Schooling</h4><p>St. Xavier\'s High School</p></div><div class="sec-card"><h4>🎓 Graduation</h4><p>Tolani College of Commerce</p></div><div class="sec-card"><h4>📱 Leadership</h4><p>Head of Social Media</p></div></div>' },
+                office: { icon: '🏢', title: 'EXPERIENCE', subtitle: 'Work History', color: '#b04fff', body: '<div class="exp-item" style="border-left-color:#b04fff"><div class="exp-role" style="color:#b04fff">Andromeda Sales</div><h4>Customer Service & Operations</h4><p>App testing, automation, process improvement</p></div><div class="exp-item" style="border-left-color:#ff3da6"><div class="exp-role" style="color:#ff3da6">BookMyShow Events</div><h4>Event Operations</h4><p>Lollapalooza, IPL 2024, Fintech @ Jio</p></div>' },
+                garage: { icon: '🔧', title: 'SKILLS', subtitle: 'What I Do', color: '#00ff88', body: '<div class="skill-item"><div class="skill-name"><span>Python Automation</span><span>90%</span></div><div class="skill-track"><div class="skill-fill" style="background:#00d4ff;width:90%"></div></div></div><div class="skill-item"><div class="skill-name"><span>Excel Automation</span><span>93%</span></div><div class="skill-track"><div class="skill-fill" style="background:#00ff88;width:93%"></div></div></div><div class="skill-item"><div class="skill-name"><span>Operations Mgmt</span><span>88%</span></div><div class="skill-track"><div class="skill-fill" style="background:#ff6b35;width:88%"></div></div></div><div class="modal-divider"></div><div>Python • Excel • WhatsApp API • Power BI • Zapier • GitHub</div>' },
+                techpark: { icon: '💻', title: 'PROJECTS', subtitle: 'Built From Scratch', color: '#00ffd4', body: '<div class="sec-card"><h4>📱 WhatsApp Automation</h4><p>Bulk messaging with Excel integration</p></div><div class="sec-card"><h4>📊 Excel Report Automation</h4><p>Smart report generator</p></div><div class="sec-card"><h4>🤖 AI Voice Assistant</h4><p>Memory-enabled desktop assistant</p></div>' },
+                stadium: { icon: '🏟️', title: 'EVENTS', subtitle: 'Live Experiences', color: '#ff3da6', body: '<div class="sec-card"><h4>🎸 Lollapalooza India</h4><p>Event Operations</p></div><div class="sec-card"><h4>🏏 IPL 2024</h4><p>Match-day operations</p></div><div class="sec-card"><h4>💳 Fintech @ Jio Centre</h4><p>B2B conference</p></div>' },
+                cafe: { icon: '☕', title: 'CONNECT', subtitle: "Let's Talk", color: '#ff6b35', body: '<div class="contact-form"><input placeholder="Your Name"><input placeholder="Email"><textarea placeholder="Message"></textarea><button class="contact-btn" onclick="alert(\'Thanks! Aryan will reach out.\')">SEND</button></div>' },
+                secret: { icon: '🕵️', title: 'SECRETS', subtitle: 'Hidden Achievements', color: '#ff0055', body: '<ul style="list-style:none"><li style="padding:10px;background:rgba(255,0,85,0.1);margin:8px 0;border-radius:8px">🎸 Managed 30,000+ social media reach</li><li style="padding:10px;background:rgba(255,0,85,0.1);margin:8px 0;border-radius:8px">🤖 WhatsApp bots from Excel lists</li><li style="padding:10px;background:rgba(255,0,85,0.1);margin:8px 0;border-radius:8px">🎙️ Voice AI with memory in Python</li><li style="padding:10px;background:rgba(255,0,85,0.1);margin:8px 0;border-radius:8px">🏙️ This entire 3D city built from scratch!</li></ul>' },
+                dream: { icon: '🌟', title: 'DREAMS', subtitle: 'Future Goals', color: '#ffb700', body: '<div class="dream-item"><h4>🤖 Automation Agency</h4><p>Help businesses automate</p></div><div class="dream-item"><h4>🌐 WhatsApp CRM Tool</h4><p>SaaS product</p></div><div class="dream-item"><h4>🎓 AI Engineer</h4><p>Machine learning expert</p></div>' }
             };
             
-            function openBuilding(building) {
+            function openModal(building) {
                 if (!building) return;
                 if (!visitedBuildings.has(building.id)) {
                     visitedBuildings.add(building.id);
                     updateProgress();
                     showAchievement(building.achievement);
                 }
-                const content = buildingContent[building.section];
-                if (!content) return;
-                document.getElementById('modal-inner').innerHTML = `<div style="text-align:center"><div class="modal-icon">${content.icon}</div><div class="modal-title" style="color:${content.color}">${content.title}</div><div class="modal-subtitle">${content.subtitle}</div></div><div class="modal-divider"></div>${content.content}`;
-                document.getElementById('modal-overlay').classList.add('open');
+                const data = contentMap[building.section];
+                if (data) {
+                    document.getElementById('modal-inner').innerHTML = `<div style="text-align:center"><div class="modal-icon">${data.icon}</div><div class="modal-title" style="color:${data.color}">${data.title}</div><div class="modal-subtitle">${data.subtitle}</div></div><div class="modal-divider"></div>${data.body}`;
+                    document.getElementById('modal-overlay').classList.add('open');
+                    setTimeout(() => {
+                        document.querySelectorAll('.skill-fill').forEach(el => el.style.width = el.style.width);
+                    }, 100);
+                }
             }
             
-            document.getElementById('modal-close').addEventListener('click', () => document.getElementById('modal-overlay').classList.remove('open'));
-            document.getElementById('modal-overlay').addEventListener('click', (e) => { if (e.target === document.getElementById('modal-overlay')) document.getElementById('modal-overlay').classList.remove('open'); });
-            
-            // ============ CAMERA FOLLOW ============
-            let cameraOffset = new THREE.Vector3(0, 3.5, 7);
+            document.getElementById('modal-close').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
+            document.getElementById('modal-overlay').onclick = (e) => { if (e.target.id === 'modal-overlay') document.getElementById('modal-overlay').classList.remove('open'); };
             
             // ============ ANIMATION LOOP ============
+            let lastTime = 0;
+            
             function animate() {
                 requestAnimationFrame(animate);
                 
-                // Car movement
-                if (keys.w) carSpeed += acceleration;
-                if (keys.s) carSpeed -= acceleration * 0.6;
-                carSpeed *= friction;
-                carSpeed = Math.max(-maxSpeed * 0.4, Math.min(maxSpeed, carSpeed));
+                // Movement
+                if (controls.up) speed += ACC;
+                if (controls.down) speed -= ACC * 0.6;
+                speed *= FRICTION;
+                speed = Math.min(MAX_SPEED, Math.max(-MAX_SPEED * 0.4, speed));
                 
-                if (keys.a && Math.abs(carSpeed) > 0.2) carAngle += turnSpeed;
-                if (keys.d && Math.abs(carSpeed) > 0.2) carAngle -= turnSpeed;
+                if (controls.left && Math.abs(speed) > 0.2) angle += TURN_SPEED;
+                if (controls.right && Math.abs(speed) > 0.2) angle -= TURN_SPEED;
                 
-                carGroup.position.x += Math.sin(carAngle) * carSpeed * 0.1;
-                carGroup.position.z += Math.cos(carAngle) * carSpeed * 0.1;
-                carGroup.rotation.y = carAngle;
+                car.position.x += Math.sin(angle) * speed * 0.09;
+                car.position.z += Math.cos(angle) * speed * 0.09;
+                car.rotation.y = angle;
                 
                 // Boundaries
-                const bound = 30;
-                carGroup.position.x = Math.max(-bound, Math.min(bound, carGroup.position.x));
-                carGroup.position.z = Math.max(-bound, Math.min(bound, carGroup.position.z));
+                const limit = 29;
+                car.position.x = Math.max(-limit, Math.min(limit, car.position.x));
+                car.position.z = Math.max(-limit, Math.min(limit, car.position.z));
                 
                 // Camera follow
-                const targetPosition = carGroup.position.clone().add(cameraOffset);
-                camera.position.lerp(targetPosition, 0.08);
-                camera.lookAt(carGroup.position);
+                const targetX = car.position.x;
+                const targetZ = car.position.z;
+                camera.position.x += (targetX - camera.position.x) * 0.08;
+                camera.position.z += (targetZ - camera.position.z) * 0.08;
+                camera.lookAt(car.position);
                 
-                // Animate NPC cars
-                npcCars.forEach(car => {
-                    car.angle += car.speed;
-                    car.mesh.position.x = Math.cos(car.angle) * car.radius;
-                    car.mesh.position.z = Math.sin(car.angle) * car.radius;
-                    car.mesh.rotation.y = car.angle + Math.PI / 2;
+                // Animate NPCs
+                npcList.forEach(n => {
+                    n.angle += n.speed;
+                    n.mesh.position.x = Math.cos(n.angle) * n.radius;
+                    n.mesh.position.z = Math.sin(n.angle) * n.radius;
+                    n.mesh.rotation.y = n.angle + Math.PI / 2;
                 });
                 
-                checkBuildingProximity();
+                checkProximity();
                 renderer.render(scene, camera);
             }
             
             animate();
-            showAchievement('🚗 Welcome to AP City 3D! Drive around and explore!');
+            showAchievement('🚗 Welcome to AP City 3D! Drive & Explore!');
             
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
@@ -690,7 +934,7 @@
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
             
-            console.log('AP City 3D Ready!');
+            console.log('AP City 3D Running!');
         }
     </script>
 </body>
