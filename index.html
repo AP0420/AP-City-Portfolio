@@ -11,13 +11,8 @@
         canvas { display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         
         /* UI Overlay */
-        .ui-overlay, #info, #controls-panel, #building-indicator, #progress-panel, #achievement-toast, #modal-overlay, #loading {
-            position: fixed;
-            z-index: 100;
-            pointer-events: none;
-        }
-        
         #info {
+            position: fixed;
             top: 20px;
             left: 20px;
             background: rgba(5, 5, 20, 0.85);
@@ -26,6 +21,7 @@
             border-radius: 12px;
             padding: 12px 20px;
             font-family: 'Orbitron', monospace;
+            z-index: 100;
             pointer-events: none;
         }
         
@@ -44,6 +40,7 @@
         .tagline { font-size: 10px; color: rgba(0, 212, 255, 0.6); letter-spacing: 1px; margin-top: 4px; }
         
         #controls-panel {
+            position: fixed;
             bottom: 20px;
             left: 20px;
             background: rgba(5, 5, 20, 0.85);
@@ -53,6 +50,7 @@
             padding: 12px 20px;
             font-size: 11px;
             font-family: 'Orbitron', monospace;
+            z-index: 100;
             pointer-events: none;
         }
         
@@ -67,6 +65,7 @@
         }
         
         #building-indicator {
+            position: fixed;
             bottom: 120px;
             left: 50%;
             transform: translateX(-50%);
@@ -76,6 +75,7 @@
             border-radius: 12px;
             padding: 12px 24px;
             text-align: center;
+            z-index: 100;
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
@@ -87,6 +87,7 @@
         .building-hint { font-size: 10px; color: rgba(255, 255, 255, 0.5); margin-top: 5px; }
         
         #progress-panel {
+            position: fixed;
             top: 20px;
             right: 20px;
             background: rgba(5, 5, 20, 0.85);
@@ -97,6 +98,7 @@
             min-width: 160px;
             text-align: center;
             font-family: 'Orbitron', monospace;
+            z-index: 100;
             pointer-events: none;
         }
         
@@ -106,6 +108,7 @@
         .progress-text { font-size: 10px; color: #00d4ff; }
         
         #achievement-toast {
+            position: fixed;
             bottom: 120px;
             right: 20px;
             background: rgba(5, 5, 20, 0.95);
@@ -115,6 +118,7 @@
             padding: 12px 20px;
             transform: translateX(150%);
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 200;
             min-width: 220px;
             font-family: 'Orbitron', monospace;
             pointer-events: none;
@@ -125,9 +129,11 @@
         .ach-name { font-size: 12px; color: #fff; }
         
         #modal-overlay {
+            position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(8px);
+            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -204,6 +210,7 @@
         .dream-item p { font-size: 10px; color: rgba(255, 255, 255, 0.6); }
         
         #loading {
+            position: fixed;
             inset: 0;
             background: #050510;
             display: flex;
@@ -212,7 +219,6 @@
             flex-direction: column;
             z-index: 10000;
             font-family: 'Orbitron', monospace;
-            pointer-events: none;
         }
         
         .loader-text { color: #00d4ff; font-size: 14px; letter-spacing: 2px; margin-top: 20px; }
@@ -269,30 +275,33 @@
         </div>
     </div>
 
-    <!-- Using a more reliable CDN for Three.js -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <!-- Try multiple CDNs with fallback -->
+    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+    <script>
+        // Check if Three.js loaded, if not try alternative CDN
+        if (typeof THREE === 'undefined') {
+            document.write('<script src="https://cdn.skypack.dev/three@<version>/build/three.min.js"><\/script>');
+        }
+    </script>
     
     <script>
         // Wait for everything to load
-        window.addEventListener('load', function() {
-            // Check if Three.js loaded
+        function waitForThree() {
             if (typeof THREE === 'undefined') {
-                document.getElementById('loading').innerHTML = '<div style="color:red">Failed to load 3D engine. Please refresh.</div>';
-                console.error('Three.js failed to load');
+                setTimeout(waitForThree, 100);
                 return;
             }
-            
             init3D();
-        });
+        }
+        
+        window.addEventListener('load', waitForThree);
         
         function init3D() {
-            console.log('Initializing AP City 3D...');
+            console.log('Three.js loaded, initializing AP City 3D...');
             
             // Hide loading screen
-            setTimeout(() => {
-                const loading = document.getElementById('loading');
-                if (loading) loading.style.display = 'none';
-            }, 500);
+            const loading = document.getElementById('loading');
+            if (loading) loading.style.display = 'none';
             
             // ============ BUILDING DATA ============
             const buildingsData = [
@@ -337,10 +346,6 @@
             const fillLight = new THREE.PointLight(0x4466ff, 0.4);
             fillLight.position.set(0, 5, 0);
             scene.add(fillLight);
-            
-            const backLight = new THREE.PointLight(0xffaa66, 0.3);
-            backLight.position.set(-5, 3, -8);
-            scene.add(backLight);
             
             // ============ GROUND ============
             const groundMat = new THREE.MeshStandardMaterial({ color: 0x0a0a18, roughness: 0.8 });
