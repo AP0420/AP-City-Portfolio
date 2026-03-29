@@ -6,38 +6,18 @@
     <title>AP City 3D — Drive. Explore. Discover My Work.</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Exo 2', sans-serif; overflow: hidden; color: #fff; }
+        canvas { display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         
-        body {
-            font-family: 'Exo 2', sans-serif;
-            overflow: hidden;
-            color: #fff;
-        }
-        
-        /* Canvas takes full screen */
-        canvas {
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-        
-        /* UI Overlay - higher z-index */
-        .ui-overlay {
+        /* UI Overlay */
+        .ui-overlay, #info, #controls-panel, #building-indicator, #progress-panel, #achievement-toast, #modal-overlay, #loading {
             position: fixed;
             z-index: 100;
             pointer-events: none;
         }
         
         #info {
-            position: fixed;
             top: 20px;
             left: 20px;
             background: rgba(5, 5, 20, 0.85);
@@ -46,7 +26,6 @@
             border-radius: 12px;
             padding: 12px 20px;
             font-family: 'Orbitron', monospace;
-            z-index: 100;
             pointer-events: none;
         }
         
@@ -61,22 +40,10 @@
             letter-spacing: 2px;
         }
         
-        .name {
-            font-size: 18px;
-            font-weight: 700;
-            color: #00d4ff;
-            letter-spacing: 2px;
-        }
-        
-        .tagline {
-            font-size: 10px;
-            color: rgba(0, 212, 255, 0.6);
-            letter-spacing: 1px;
-            margin-top: 4px;
-        }
+        .name { font-size: 18px; font-weight: 700; color: #00d4ff; letter-spacing: 2px; }
+        .tagline { font-size: 10px; color: rgba(0, 212, 255, 0.6); letter-spacing: 1px; margin-top: 4px; }
         
         #controls-panel {
-            position: fixed;
             bottom: 20px;
             left: 20px;
             background: rgba(5, 5, 20, 0.85);
@@ -86,7 +53,6 @@
             padding: 12px 20px;
             font-size: 11px;
             font-family: 'Orbitron', monospace;
-            z-index: 100;
             pointer-events: none;
         }
         
@@ -101,7 +67,6 @@
         }
         
         #building-indicator {
-            position: fixed;
             bottom: 120px;
             left: 50%;
             transform: translateX(-50%);
@@ -111,32 +76,17 @@
             border-radius: 12px;
             padding: 12px 24px;
             text-align: center;
-            z-index: 100;
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
             font-family: 'Orbitron', monospace;
         }
         
-        #building-indicator.visible {
-            opacity: 1;
-        }
-        
-        .building-name {
-            color: #00ff88;
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: 2px;
-        }
-        
-        .building-hint {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-top: 5px;
-        }
+        #building-indicator.visible { opacity: 1; }
+        .building-name { color: #00ff88; font-size: 16px; font-weight: 700; letter-spacing: 2px; }
+        .building-hint { font-size: 10px; color: rgba(255, 255, 255, 0.5); margin-top: 5px; }
         
         #progress-panel {
-            position: fixed;
             top: 20px;
             right: 20px;
             background: rgba(5, 5, 20, 0.85);
@@ -147,41 +97,15 @@
             min-width: 160px;
             text-align: center;
             font-family: 'Orbitron', monospace;
-            z-index: 100;
             pointer-events: none;
         }
         
-        .progress-label {
-            font-size: 9px;
-            color: rgba(0, 212, 255, 0.6);
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            overflow: hidden;
-            margin: 8px 0;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00d4ff, #b04fff, #ff3da6);
-            width: 0%;
-            transition: width 0.5s;
-            border-radius: 2px;
-        }
-        
-        .progress-text {
-            font-size: 10px;
-            color: #00d4ff;
-        }
+        .progress-label { font-size: 9px; color: rgba(0, 212, 255, 0.6); letter-spacing: 2px; margin-bottom: 5px; }
+        .progress-bar { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; overflow: hidden; margin: 8px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #00d4ff, #b04fff, #ff3da6); width: 0%; transition: width 0.5s; border-radius: 2px; }
+        .progress-text { font-size: 10px; color: #00d4ff; }
         
         #achievement-toast {
-            position: fixed;
             bottom: 120px;
             right: 20px;
             background: rgba(5, 5, 20, 0.95);
@@ -191,34 +115,19 @@
             padding: 12px 20px;
             transform: translateX(150%);
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 200;
             min-width: 220px;
             font-family: 'Orbitron', monospace;
             pointer-events: none;
         }
         
-        #achievement-toast.show {
-            transform: translateX(0);
-        }
-        
-        .ach-title {
-            font-size: 9px;
-            color: #ffb700;
-            letter-spacing: 2px;
-            margin-bottom: 4px;
-        }
-        
-        .ach-name {
-            font-size: 12px;
-            color: #fff;
-        }
+        #achievement-toast.show { transform: translateX(0); }
+        .ach-title { font-size: 9px; color: #ffb700; letter-spacing: 2px; margin-bottom: 4px; }
+        .ach-name { font-size: 12px; color: #fff; }
         
         #modal-overlay {
-            position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(8px);
-            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -227,10 +136,7 @@
             transition: opacity 0.3s;
         }
         
-        #modal-overlay.open {
-            opacity: 1;
-            pointer-events: all;
-        }
+        #modal-overlay.open { opacity: 1; pointer-events: all; }
         
         .modal-content {
             background: linear-gradient(145deg, #080818, #0d1228);
@@ -246,9 +152,7 @@
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        #modal-overlay.open .modal-content {
-            transform: scale(1);
-        }
+        #modal-overlay.open .modal-content { transform: scale(1); }
         
         .modal-close {
             position: absolute;
@@ -268,178 +172,38 @@
             transition: all 0.2s;
         }
         
-        .modal-close:hover {
-            background: rgba(255, 0, 0, 0.3);
-            border-color: rgba(255, 0, 0, 0.5);
-        }
+        .modal-close:hover { background: rgba(255, 0, 0, 0.3); border-color: rgba(255, 0, 0, 0.5); }
+        .modal-icon { font-size: 48px; text-align: center; margin-bottom: 12px; }
+        .modal-title { font-family: 'Orbitron', monospace; font-size: 24px; font-weight: 900; text-align: center; margin-bottom: 6px; }
+        .modal-subtitle { font-size: 11px; text-align: center; color: rgba(0, 212, 255, 0.6); letter-spacing: 2px; margin-bottom: 20px; }
+        .modal-divider { height: 1px; background: linear-gradient(90deg, transparent, #00d4ff, transparent); margin: 20px 0; }
         
-        .modal-icon {
-            font-size: 48px;
-            text-align: center;
-            margin-bottom: 12px;
-        }
+        .section-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+        .sec-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 14px; }
+        .sec-card h4 { font-size: 13px; color: #00d4ff; margin-bottom: 8px; }
+        .sec-card p { font-size: 11px; color: rgba(255, 255, 255, 0.7); line-height: 1.5; }
         
-        .modal-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 24px;
-            font-weight: 900;
-            text-align: center;
-            margin-bottom: 6px;
-        }
+        .skill-item { margin-bottom: 12px; }
+        .skill-name { font-size: 11px; display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .skill-track { height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; overflow: hidden; }
+        .skill-fill { height: 100%; border-radius: 2px; width: 0%; transition: width 1s; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 9px; border: 1px solid; margin: 2px; }
         
-        .modal-subtitle {
-            font-size: 11px;
-            text-align: center;
-            color: rgba(0, 212, 255, 0.6);
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-        }
+        .exp-item { padding: 12px; background: rgba(255, 255, 255, 0.03); border-left: 3px solid; border-radius: 0 8px 8px 0; margin-bottom: 12px; }
+        .exp-item h4 { font-size: 13px; margin-bottom: 4px; }
+        .exp-item p { font-size: 11px; color: rgba(255, 255, 255, 0.6); }
+        .exp-role { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
         
-        .modal-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
-            margin: 20px 0;
-        }
+        .contact-form input, .contact-form textarea { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 10px; color: #fff; font-size: 12px; margin-bottom: 10px; outline: none; }
+        .contact-form input:focus, .contact-form textarea:focus { border-color: #ff6b35; }
+        .contact-form textarea { height: 70px; resize: none; }
+        .contact-btn { background: linear-gradient(135deg, #ff6b35, #ff3da6); border: none; border-radius: 8px; padding: 10px 20px; color: #fff; font-weight: 600; cursor: pointer; width: 100%; }
         
-        .section-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-            margin-top: 12px;
-        }
-        
-        .sec-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 14px;
-        }
-        
-        .sec-card h4 {
-            font-size: 13px;
-            color: #00d4ff;
-            margin-bottom: 8px;
-        }
-        
-        .sec-card p {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.5;
-        }
-        
-        .skill-item {
-            margin-bottom: 12px;
-        }
-        
-        .skill-name {
-            font-size: 11px;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
-        }
-        
-        .skill-track {
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        
-        .skill-fill {
-            height: 100%;
-            border-radius: 2px;
-            width: 0%;
-            transition: width 1s;
-        }
-        
-        .tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 9px;
-            border: 1px solid;
-            margin: 2px;
-        }
-        
-        .exp-item {
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border-left: 3px solid;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 12px;
-        }
-        
-        .exp-item h4 {
-            font-size: 13px;
-            margin-bottom: 4px;
-        }
-        
-        .exp-item p {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-        
-        .exp-role {
-            font-size: 9px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        
-        .contact-form input,
-        .contact-form textarea {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 10px;
-            color: #fff;
-            font-size: 12px;
-            margin-bottom: 10px;
-            outline: none;
-        }
-        
-        .contact-form input:focus,
-        .contact-form textarea:focus {
-            border-color: #ff6b35;
-        }
-        
-        .contact-form textarea {
-            height: 70px;
-            resize: none;
-        }
-        
-        .contact-btn {
-            background: linear-gradient(135deg, #ff6b35, #ff3da6);
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-        }
-        
-        .dream-item {
-            padding: 10px;
-            background: rgba(255, 183, 0, 0.05);
-            border: 1px solid rgba(255, 183, 0, 0.15);
-            border-radius: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .dream-item h4 {
-            font-size: 12px;
-            color: #ffb700;
-        }
-        
-        .dream-item p {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.6);
-        }
+        .dream-item { padding: 10px; background: rgba(255, 183, 0, 0.05); border: 1px solid rgba(255, 183, 0, 0.15); border-radius: 8px; margin-bottom: 8px; }
+        .dream-item h4 { font-size: 12px; color: #ffb700; }
+        .dream-item p { font-size: 10px; color: rgba(255, 255, 255, 0.6); }
         
         #loading {
-            position: fixed;
             inset: 0;
             background: #050510;
             display: flex;
@@ -448,14 +212,10 @@
             flex-direction: column;
             z-index: 10000;
             font-family: 'Orbitron', monospace;
+            pointer-events: none;
         }
         
-        .loader-text {
-            color: #00d4ff;
-            font-size: 14px;
-            letter-spacing: 2px;
-            margin-top: 20px;
-        }
+        .loader-text { color: #00d4ff; font-size: 14px; letter-spacing: 2px; margin-top: 20px; }
         
         @media (max-width: 600px) {
             #info { font-size: 10px; padding: 8px 12px; }
@@ -464,18 +224,9 @@
             .modal-content { padding: 20px; }
         }
         
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: rgba(0, 212, 255, 0.3);
-            border-radius: 2px;
-        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.3); border-radius: 2px; }
     </style>
 </head>
 <body>
@@ -492,9 +243,7 @@
     
     <div id="progress-panel">
         <div class="progress-label">CITY EXPLORED</div>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress-fill"></div>
-        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
         <div class="progress-text" id="progress-text">0 / 8 BUILDINGS</div>
     </div>
     
@@ -504,10 +253,8 @@
     </div>
     
     <div id="controls-panel">
-        <span class="controls-key">W A S D</span> or 
-        <span class="controls-key">← ↑ ↓ →</span> to drive<br>
-        <span class="controls-key">E</span> to enter building • 
-        <span class="controls-key">ESC</span> to close
+        <span class="controls-key">W A S D</span> or <span class="controls-key">← ↑ ↓ →</span> to drive<br>
+        <span class="controls-key">E</span> to enter building • <span class="controls-key">ESC</span> to close
     </div>
     
     <div id="achievement-toast">
@@ -522,22 +269,30 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Using a more reliable CDN for Three.js -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
     
     <script>
-        // Wait for Three.js to load
+        // Wait for everything to load
         window.addEventListener('load', function() {
-            init();
+            // Check if Three.js loaded
+            if (typeof THREE === 'undefined') {
+                document.getElementById('loading').innerHTML = '<div style="color:red">Failed to load 3D engine. Please refresh.</div>';
+                console.error('Three.js failed to load');
+                return;
+            }
+            
+            init3D();
         });
         
-        function init() {
+        function init3D() {
             console.log('Initializing AP City 3D...');
             
-            // Hide loading screen after a short delay
+            // Hide loading screen
             setTimeout(() => {
                 const loading = document.getElementById('loading');
                 if (loading) loading.style.display = 'none';
-            }, 800);
+            }, 500);
             
             // ============ BUILDING DATA ============
             const buildingsData = [
@@ -569,8 +324,6 @@
             renderer.shadowMap.enabled = true;
             document.body.appendChild(renderer.domElement);
             
-            console.log('Renderer created');
-            
             // ============ LIGHTING ============
             const ambientLight = new THREE.AmbientLight(0x404060);
             scene.add(ambientLight);
@@ -579,8 +332,6 @@
             directionalLight.position.set(10, 20, 5);
             directionalLight.castShadow = true;
             directionalLight.receiveShadow = true;
-            directionalLight.shadow.mapSize.width = 1024;
-            directionalLight.shadow.mapSize.height = 1024;
             scene.add(directionalLight);
             
             const fillLight = new THREE.PointLight(0x4466ff, 0.4);
@@ -592,7 +343,7 @@
             scene.add(backLight);
             
             // ============ GROUND ============
-            const groundMat = new THREE.MeshStandardMaterial({ color: 0x0a0a18, roughness: 0.8, metalness: 0.1 });
+            const groundMat = new THREE.MeshStandardMaterial({ color: 0x0a0a18, roughness: 0.8 });
             const ground = new THREE.Mesh(new THREE.PlaneGeometry(70, 70), groundMat);
             ground.rotation.x = -Math.PI / 2;
             ground.position.y = -0.1;
@@ -604,7 +355,7 @@
             gridHelper.position.y = -0.05;
             scene.add(gridHelper);
             
-            // Road markings
+            // Road markers
             const markerMat = new THREE.MeshStandardMaterial({ color: 0xffaa44, emissive: 0xff4400, emissiveIntensity: 0.2 });
             for (let i = -30; i <= 30; i += 5) {
                 const marker = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 6), markerMat);
@@ -647,9 +398,7 @@
                 [28, 28], [25, 30], [22, 29], [30, 22], [32, 25]
             ];
             
-            treePositions.forEach(pos => {
-                scene.add(createTree(pos[0], pos[1]));
-            });
+            treePositions.forEach(pos => scene.add(createTree(pos[0], pos[1])));
             
             // ============ BUILDINGS ============
             buildingsData.forEach(b => {
@@ -696,7 +445,7 @@
             // ============ PLAYER CAR ============
             const carGroup = new THREE.Group();
             
-            const carBodyMat = new THREE.MeshStandardMaterial({ color: 0x00d4ff, metalness: 0.8, roughness: 0.2 });
+            const carBodyMat = new THREE.MeshStandardMaterial({ color: 0x00d4ff, metalness: 0.8 });
             const carBodyMain = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.4, 1.5), carBodyMat);
             carBodyMain.position.y = 0.2;
             carBodyMain.castShadow = true;
@@ -768,15 +517,9 @@
                 if (key === 's') keys.s = true;
                 if (key === 'a') keys.a = true;
                 if (key === 'd') keys.d = true;
-                if (key === 'e' && currentBuilding) {
-                    openBuilding(currentBuilding);
-                }
-                if (key === 'escape') {
-                    document.getElementById('modal-overlay').classList.remove('open');
-                }
-                if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 's', 'a', 'd'].includes(key)) {
-                    e.preventDefault();
-                }
+                if (key === 'e' && currentBuilding) openBuilding(currentBuilding);
+                if (key === 'escape') document.getElementById('modal-overlay').classList.remove('open');
+                if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 's', 'a', 'd'].includes(key)) e.preventDefault();
             });
             
             document.addEventListener('keyup', (e) => {
@@ -838,21 +581,112 @@
                 const pct = (visitedBuildings.size / buildingsData.length) * 100;
                 document.getElementById('progress-fill').style.width = pct + '%';
                 document.getElementById('progress-text').textContent = `${visitedBuildings.size} / ${buildingsData.length} BUILDINGS`;
-                if (visitedBuildings.size === buildingsData.length) {
-                    showAchievement('🏆 Full City Explorer — AP City Conquered!');
-                }
+                if (visitedBuildings.size === buildingsData.length) showAchievement('🏆 Full City Explorer — AP City Conquered!');
             }
             
             // ============ BUILDING CONTENT ============
             const buildingContent = {
                 house: { icon: '🏠', title: 'THE STORY BEHIND THE DRIVER', subtitle: 'About Aryan Parmar', color: '#00d4ff', content: `
-                    <div style="text-align:center; margin-bottom:20px">
-                        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#b04fff);margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:36px;">👨‍💻</div>
-                        <div style="font-family:Orbitron;font-size:22px;font-weight:900;color:#00d4ff;margin-top:12px">ARYAN PARMAR</div>
-                        <div style="font-size:11px;color:rgba(0,212,255,0.55)">MUMBAI, INDIA</div>
-                    </div>
+                    <div style="text-align:center; margin-bottom:20px"><div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#b04fff);margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:36px;">👨‍💻</div><div style="font-family:Orbitron;font-size:22px;font-weight:900;color:#00d4ff;margin-top:12px">ARYAN PARMAR</div><div style="font-size:11px;color:rgba(0,212,255,0.55)">MUMBAI, INDIA</div></div>
                     <p>Operations professional and automation builder who turns manual chaos into streamlined systems. I build bots, test apps, manage processes — and create digital experiences people remember.</p>
                     <div class="modal-divider"></div>
-                    <div class="section-grid">
-                        <div class="sec-card"><h4>🏫 Schooling</h4><p>St. Xavier's High School</p></div>
-                        <div class="sec-card"><h4>🎓 Graduation</h4><p>Tolani College of Commerce</
+                    <div class="section-grid"><div class="sec-card"><h4>🏫 Schooling</h4><p>St. Xavier's High School</p></div><div class="sec-card"><h4>🎓 Graduation</h4><p>Tolani College of Commerce</p></div><div class="sec-card"><h4>📱 Leadership</h4><p>Head of Social Media - College Fest</p></div></div>
+                `},
+                office: { icon: '🏢', title: "PLACES I'VE WORKED", subtitle: 'Experience', color: '#b04fff', content: `
+                    <div class="exp-item" style="border-left-color:#b04fff"><div class="exp-role" style="color:#b04fff">Current · Andromeda Sales & Distribution</div><h4>Customer Service & Operations</h4><p>Handling customer service operations, tech processes, app testing, and internal automation.</p></div>
+                    <div class="exp-item" style="border-left-color:#ff3da6"><div class="exp-role" style="color:#ff3da6">Freelance · BookMyShow Events</div><h4>Event Operations</h4><p>Lollapalooza, IPL 2024, Aaditya Gadhvi, Fintech @ Jio Centre</p></div>
+                `},
+                garage: { icon: '🔧', title: 'MY GARAGE', subtitle: 'Skills', color: '#00ff88', content: `
+                    <div class="skill-item"><div class="skill-name"><span>Python Automation</span><span>90%</span></div><div class="skill-track"><div class="skill-fill" style="background:#00d4ff;width:90%"></div></div></div>
+                    <div class="skill-item"><div class="skill-name"><span>Excel Automation</span><span>93%</span></div><div class="skill-track"><div class="skill-fill" style="background:#00ff88;width:93%"></div></div></div>
+                    <div class="modal-divider"></div>
+                    <div>${['Python','Excel','WhatsApp API','Power BI','Canva','Zapier'].map(t => `<span class="tag" style="color:#00ff88;border-color:rgba(0,255,136,0.3)">${t}</span>`).join('')}</div>
+                `},
+                techpark: { icon: '💻', title: 'PROJECTS I BUILT', subtitle: 'That Solve Real Problems', color: '#00ffd4', content: `
+                    <div class="sec-card"><h4>📱 WhatsApp Automation Tool</h4><p>Bulk WhatsApp messaging with Excel integration</p></div>
+                    <div class="sec-card"><h4>📊 Excel Report Automation</h4><p>Smart Excel file generator that eliminates manual work</p></div>
+                    <div class="sec-card"><h4>🤖 AI Voice Assistant</h4><p>Desktop assistant with memory and speech interaction</p></div>
+                `},
+                stadium: { icon: '🏟️', title: 'EVENTS', subtitle: "Live Experiences", color: '#ff3da6', content: `
+                    <div class="sec-card"><h4>🎸 Lollapalooza India</h4><p>Event Ops · BookMyShow</p></div>
+                    <div class="sec-card"><h4>🏏 IPL 2024</h4><p>Match-day operations</p></div>
+                `},
+                cafe: { icon: '☕', title: "LET'S CONNECT", subtitle: "Contact Me", color: '#ff6b35', content: `
+                    <div class="contact-form"><input type="text" placeholder="Your Name"><input type="email" placeholder="Your Email"><textarea placeholder="What's on your mind?"></textarea><button class="contact-btn" onclick="alert('Message sent! Aryan will get back to you.')">SEND MESSAGE →</button></div>
+                `},
+                secret: { icon: '🕵️', title: 'HIDDEN ACHIEVEMENTS', subtitle: 'You Found The Secret', color: '#ff0055', content: `<ul style="list-style:none;padding:0"><li style="padding:8px;background:rgba(255,0,85,0.1);margin:5px 0;border-radius:8px">🎸 Managed 30,000+ users as Head of Social Media</li><li style="padding:8px;background:rgba(255,0,85,0.1);margin:5px 0;border-radius:8px">🤖 Built WhatsApp automation bots from Excel lists</li><li style="padding:8px;background:rgba(255,0,85,0.1);margin:5px 0;border-radius:8px">🎙️ Voice AI assistant with memory in Python</li><li style="padding:8px;background:rgba(255,0,85,0.1);margin:5px 0;border-radius:8px">🏙️ This entire 3D city built from scratch!</li></ul>` },
+                dream: { icon: '🌟', title: 'DREAM TOWER', subtitle: "Future Goals", color: '#ffb700', content: `<div class="dream-item"><h4>🤖 Full Automation Agency</h4><p>Help small businesses automate repetitive work</p></div><div class="dream-item"><h4>🌐 WhatsApp CRM Tool</h4><p>A real product for small business owners</p></div><div class="dream-item"><h4>🎓 AI & Automation Engineer</h4><p>Level up into machine learning</p></div>` }
+            };
+            
+            function openBuilding(building) {
+                if (!building) return;
+                if (!visitedBuildings.has(building.id)) {
+                    visitedBuildings.add(building.id);
+                    updateProgress();
+                    showAchievement(building.achievement);
+                }
+                const content = buildingContent[building.section];
+                if (!content) return;
+                document.getElementById('modal-inner').innerHTML = `<div style="text-align:center"><div class="modal-icon">${content.icon}</div><div class="modal-title" style="color:${content.color}">${content.title}</div><div class="modal-subtitle">${content.subtitle}</div></div><div class="modal-divider"></div>${content.content}`;
+                document.getElementById('modal-overlay').classList.add('open');
+            }
+            
+            document.getElementById('modal-close').addEventListener('click', () => document.getElementById('modal-overlay').classList.remove('open'));
+            document.getElementById('modal-overlay').addEventListener('click', (e) => { if (e.target === document.getElementById('modal-overlay')) document.getElementById('modal-overlay').classList.remove('open'); });
+            
+            // ============ CAMERA FOLLOW ============
+            let cameraOffset = new THREE.Vector3(0, 3.5, 7);
+            
+            // ============ ANIMATION LOOP ============
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Car movement
+                if (keys.w) carSpeed += acceleration;
+                if (keys.s) carSpeed -= acceleration * 0.6;
+                carSpeed *= friction;
+                carSpeed = Math.max(-maxSpeed * 0.4, Math.min(maxSpeed, carSpeed));
+                
+                if (keys.a && Math.abs(carSpeed) > 0.2) carAngle += turnSpeed;
+                if (keys.d && Math.abs(carSpeed) > 0.2) carAngle -= turnSpeed;
+                
+                carGroup.position.x += Math.sin(carAngle) * carSpeed * 0.1;
+                carGroup.position.z += Math.cos(carAngle) * carSpeed * 0.1;
+                carGroup.rotation.y = carAngle;
+                
+                // Boundaries
+                const bound = 30;
+                carGroup.position.x = Math.max(-bound, Math.min(bound, carGroup.position.x));
+                carGroup.position.z = Math.max(-bound, Math.min(bound, carGroup.position.z));
+                
+                // Camera follow
+                const targetPosition = carGroup.position.clone().add(cameraOffset);
+                camera.position.lerp(targetPosition, 0.08);
+                camera.lookAt(carGroup.position);
+                
+                // Animate NPC cars
+                npcCars.forEach(car => {
+                    car.angle += car.speed;
+                    car.mesh.position.x = Math.cos(car.angle) * car.radius;
+                    car.mesh.position.z = Math.sin(car.angle) * car.radius;
+                    car.mesh.rotation.y = car.angle + Math.PI / 2;
+                });
+                
+                checkBuildingProximity();
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            showAchievement('🚗 Welcome to AP City 3D! Drive around and explore!');
+            
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+            
+            console.log('AP City 3D Ready!');
+        }
+    </script>
+</body>
+</html>
